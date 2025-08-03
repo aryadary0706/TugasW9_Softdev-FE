@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import Head from 'next/head'
 
 async function getProducts() {
   const res = await fetch('https://fakestoreapi.com/products', {
@@ -7,6 +8,15 @@ async function getProducts() {
   });
   return res.json();
 }
+
+type Product = {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+};
 
 export default async function ProductsPage() {
   const data = await getProducts();
@@ -23,7 +33,7 @@ export default async function ProductsPage() {
     </head>
 
   <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 flex-wrap">
-    {products.map((product: any) => (
+    {products.map((product: Product) => (
       <li key={product.id} className="border p-2 rounded-2xl shadow-md hover:shadow-md transition">
         <Link href={`/product/${product.id}`} className="block space-y-2">
           <Image
