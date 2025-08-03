@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 
+// Tipe produk
 type Product = {
   id: number;
   title: string;
@@ -12,20 +13,23 @@ type Product = {
   image: string;
 };
 
-// Function to fetch product details
+// Ambil detail produk
 async function getProductDetails(id: string): Promise<Product> {
   const res = await fetch(`https://fakestoreapi.com/products/${id}`);
   if (!res.ok) throw new Error('Failed to fetch product details');
   return res.json();
 }
 
-// Main product page component (with inline typed params)
-export default async function ProductPage({ params: { id } }: { params: { id: string } }) {
-  const product = await getProductDetails(id);
+// Halaman produk dinamis (tanpa deklarasi type props custom!)
+export default async function ProductPage({ params }: { params: { id: string } }) {
+  const product = await getProductDetails(params.id);
 
   return (
     <main className="max-w-xl mx-auto p-6">
-      <Link href="/" className="border rounded-2xl p-2 bg-blue-500 text-amber-50 mb-4 inline-block">
+      <Link
+        href="/"
+        className="border rounded-2xl p-2 bg-blue-500 text-amber-50 mb-4 inline-block"
+      >
         Back to Products
       </Link>
 
@@ -49,12 +53,13 @@ export default async function ProductPage({ params: { id } }: { params: { id: st
   );
 }
 
-// SSG: generate dynamic routes
+// Untuk SSG
 export async function generateStaticParams() {
   const res = await fetch('https://fakestoreapi.com/products');
   const products: Product[] = await res.json();
 
   return products.map((product) => ({
-    id: product.id.toString(),
+  id: product.id.toString(),
   }));
+
 }
