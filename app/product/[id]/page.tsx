@@ -1,37 +1,34 @@
 // app/product/[id]/page.tsx
-import Image from 'next/image'
-import Link from 'next/link'
+
+import Image from 'next/image';
+import Link from 'next/link';
 
 type Product = {
-  id: number
-  title: string
-  price: number
-  description: string
-  image: string
-}
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+};
 
-// perbaiki: tambahkan parameter id
+// Function to fetch product details
 async function getProductDetails(id: string): Promise<Product> {
   const res = await fetch(`https://fakestoreapi.com/products/${id}`);
   if (!res.ok) throw new Error('Failed to fetch product details');
   return res.json();
 }
 
-// perbaiki: tipe params diambil dari Next.js dynamic routes
-type ProductPageProps = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function ProductPage({ params }: ProductPageProps) {
-  const product = await getProductDetails(params.id);
+// Main product page component (with inline typed params)
+export default async function ProductPage({ params: { id } }: { params: { id: string } }) {
+  const product = await getProductDetails(id);
 
   return (
     <main className="max-w-xl mx-auto p-6">
       <Link href="/" className="border rounded-2xl p-2 bg-blue-500 text-amber-50 mb-4 inline-block">
         Back to Products
       </Link>
+
       <h1 className="text-2xl font-bold mb-4">Detail Produk (SSG)</h1>
 
       <div className="mb-4">
@@ -52,6 +49,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 }
 
+// SSG: generate dynamic routes
 export async function generateStaticParams() {
   const res = await fetch('https://fakestoreapi.com/products');
   const products: Product[] = await res.json();
