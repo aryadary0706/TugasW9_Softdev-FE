@@ -2,13 +2,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Head from 'next/head'
 
-async function getProducts() {
-  const res = await fetch('https://fakestoreapi.com/products', {
-    cache: 'no-store', // SSR: fetch tiap request
-  });
-  return res.json();
-}
-
 type Product = {
   id: number;
   title: string;
@@ -18,19 +11,28 @@ type Product = {
   image: string;
 };
 
+
+async function getProducts(): Promise<Product[]> {
+  const res = await fetch('https://fakestoreapi.com/products', {
+    cache: 'no-store',
+  });
+  return res.json();
+}
+
+
 export default async function ProductsPage() {
-  const data = await getProducts();
-  const products = data;
+  const products = await getProducts();
+
 
   return (
     <div>
   <h1 className="text-2xl font-bold mb-4">Product List</h1>
 
-    <head className="flex flex-col items-center">
+    <Head>
       <title>Product List</title>
       <meta name="description" content="List of products from the fake store API" />
       <link rel="icon" href="/favicon.ico" />
-    </head>
+    </Head>
 
   <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 flex-wrap">
     {products.map((product: Product) => (
